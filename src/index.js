@@ -1,33 +1,135 @@
 import "./style.css";
 
+const gridElem = 40; // 20 * 20
+
+class Apple {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  setApple(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  drawApple(ctx) {
+    ctx.fillStyle = "red";
+    ctx.fillRect(this.x * gridElem, this.y * gridElem, gridElem, gridElem);
+  }
+
+  generateApple(snake) {
+    score++;
+    const [x, y] = [
+      Math.trunc(Math.random() * 19),
+      Math.trunc(Math.random() * 19),
+    ];
+    for (let body of snake) {
+      if (body[0] === x && body[1] === y) {
+        return this.generateApple(snake);
+      }
+    }
+    this.setApple(x, y);
+  }
+}
+
+class Snake {
+  constructor(body) {
+    this.body = body;
+  }
+
+  getHead() {
+    const [head, ...body] = this.body;
+    return head;
+  }
+
+  getTail() {
+    const [head, ...tail] = this.body;
+    return tail;
+  }
+
+  isOutside() {
+    return (
+      this.body[0][0] > 19 ||
+      this.body[0][0] < 0 ||
+      this.body[0][1] > 19 ||
+      this.body[0][1] < 0
+    );
+  }
+
+  drawSnake(ctx) {
+    ctx.fillStyle = "green";
+    for (let element of this.body) {
+      ctx.fillRect(
+        element[0] * gridElem,
+        element[1] * gridElem,
+        gridElem,
+        gridElem
+      );
+    }
+  }
+
+  _calculateNewHead(direction) {
+    let head;
+    switch (direction) {
+      // est
+      case "e": {
+        head = [this.body[0][0] + 1, this.body[0][1]];
+        break;
+      }
+      // ouest
+      case "o": {
+        head = [this.body[0][0] - 1, this.body[0][1]];
+        break;
+      }
+      // nord
+      case "n": {
+        head = [this.body[0][0], this.body[0][1] - 1];
+        break;
+      }
+      // sud
+      case "s": {
+        head = [this.body[0][0], this.body[0][1] + 1];
+        break;
+      }
+    }
+    return head;
+  }
+
+  updateSnakePosition(direction, apple) {
+    let head = this._calculateNewHead(direction);
+    console.log("head: ", head);
+    //debugger;
+    console.log("body: ", this.body);
+    // unshift ajoute au début du tableau
+    this.body.unshift(head);
+
+    if (head[0] === apple.x && head[1] === apple.y) {
+      apple.generateApple(this.body);
+    } else {
+      // supprime le dernier élément
+      this.body.pop();
+    }
+    
+  }
+}
+
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 let direction = "n";
 let speed = 0;
-const gridElem = 40; // 20 * 20
-const snake = [
+
+const snake = new Snake([
   [9, 9],
   [8, 9],
   [7, 9],
-];
-let apple = [5, 5];
+]);
+let apple = new Apple(5, 5);
 let score = 0;
 
 const drawMap = () => {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 800, 800);
-};
-
-const drawSnake = () => {
-  ctx.fillStyle = "green";
-  for (let body of snake) {
-    ctx.fillRect(body[0] * gridElem, body[1] * gridElem, gridElem, gridElem);
-  }
-};
-
-const drawApple = () => {
-  ctx.fillStyle = "red";
-  ctx.fillRect(apple[0] * gridElem, apple[1] * gridElem, gridElem, gridElem);
 };
 
 window.addEventListener("keydown", (event) => {
@@ -54,18 +156,14 @@ window.addEventListener("keydown", (event) => {
 });
 
 const gameover = () => {
-  if (
-    snake[0][0] > 19 ||
-    snake[0][0] < 0 ||
-    snake[0][1] > 19 ||
-    snake[0][1] < 0
-  ) {
+  if (snake.isOutside()) {
     return true;
   } else {
-    const [head, ...body] = snake;
-    for (let bodyElement of body) {
+    let head = snake.getHead();
+    let tail = snake.getTail();
+    for (let tailElement of tail) {
       // Test si la tête et un élément du body sont sur la même case de la grille
-      if (bodyElement[0] === head[0] && bodyElement[1] === head[1]) {
+      if (tailElement[0] === head[0] && tailElement[1] === head[1]) {
         return true;
       }
     }
@@ -73,71 +171,23 @@ const gameover = () => {
   return false;
 };
 
-const generateApple = () => {
-  score++;
-  const [x, y] = [
-    Math.trunc(Math.random() * 19),
-    Math.trunc(Math.random() * 19),
-  ];
-  for (let body of snake) {
-    if (body[0] === x && body[1] === y) {
-      return generateApple();
-    }
-  }
-  apple = [x, y];
-};
-
 const drawScore = () => {
   ctx.fillStyle = "white";
   ctx.font = "40px sans-serif";
-  ctx.textBaseline = 'top';
+  ctx.textBaseline = "top";
   ctx.fillText(score, gridElem, gridElem);
-}
-
-const updateSnakePosition = () => {
-  let head;
-  switch (direction) {
-    // est
-    case "e": {
-      head = [snake[0][0] + 1, snake[0][1]];
-      break;
-    }
-    // ouest
-    case "o": {
-      head = [snake[0][0] - 1, snake[0][1]];
-      break;
-    }
-    // nord
-    case "n": {
-      head = [snake[0][0], snake[0][1] - 1];
-      break;
-    }
-    // sud
-    case "s": {
-      head = [snake[0][0], snake[0][1] + 1];
-      break;
-    }
-  }
-  // unshift ajoute au début du tableau
-  snake.unshift(head);
-
-  if (head[0] === apple[0] && head[1] === apple[1]) {
-    generateApple();
-  } else {
-    // supprime le dernier élément
-    snake.pop();
-  }
-  return gameover();
 };
 
 const move = () => {
-  if (updateSnakePosition()) {
+  snake.updateSnakePosition(direction, apple)
+  let isGameOver = gameover();
+  if (isGameOver) {
     alert("Perdu ! Votre score est: " + score);
   } else {
     speed = score * 50;
     drawMap();
-    drawSnake();
-    drawApple();
+    snake.drawSnake(ctx);
+    apple.drawApple(ctx);
     drawScore();
     setTimeout(() => {
       requestAnimationFrame(move);
