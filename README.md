@@ -1,5 +1,7 @@
 # snake
 
+C'est jeu du serpent qui tourne dans votre navigateur.
+
 ## Comment l'installer ?
 
 `git clone`
