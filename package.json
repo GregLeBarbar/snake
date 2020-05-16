@@ -1,5 +1,5 @@
 {
-  "name": "javascript-chapitre2",
+  "name": "snake",
   "version": "1.0.0",
   "description": "",
   "main": "babel.config.js",
@@ -23,6 +23,6 @@
     "webpack": "webpack",
     "start": "webpack-dev-server"
   },
-  "author": "Dyma",
+  "author": "GregLeBarbar",
   "private": true
 }
