@@ -1,6 +1,6 @@
 # snake
 
-C'est jeu du serpent qui tourne dans votre navigateur.
+C'est le jeu du serpent qui tourne dans votre navigateur.
 
 ## Comment l'installer ?
 
@@ -16,7 +16,7 @@ Votre navigateur devrait être lancé à cette adresse: http://localhost:4000/
 
 ## Comment jouer ?
 
-En utilisant les touches flèches de votre clavier
+En utilisant les touches flèches du clavier
 
 ## But du jeu ?
 
