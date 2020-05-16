@@ -4,9 +4,11 @@ C'est jeu du serpent qui tourne dans votre navigateur.
 
 ## Comment l'installer ?
 
-`git clone`
+`git clone git@github.com:GregLeBarbar/snake.git`
 
-`npm i`
+`cd snake`
+
+`npm i -D @babel/cli @babel/core @babel/preset-env babel-loader core-js css-loader file-loader html-webpack-plugin regenerator-runtime style-loader webpack webpack-cli webpack-dev-server`
 
 `npm start`
 
